@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#c8102e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="QC3級">
+<title>QC検定3級 問題演習</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root {
+  --primary: #c8102e;
+  --primary-dark: #9a0c23;
+  --primary-light: #fde8eb;
+  --bg: #fafaf7;
+  --surface: #ffffff;
+  --ink: #1a1a1a;
+  --ink-soft: #5c5c5c;
+  --line: #e8e6e0;
+  --correct: #2d7a4f;
+  --correct-bg: #e8f5ee;
+  --wrong: #c8102e;
+  --wrong-bg: #fde8eb;
+  --accent: #d4a017;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.7;
+  font-size: 16px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ヘッダー */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-md);
+  padding-top: calc(14px + env(safe-area-inset-top));
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.header .sub {
+  font-size: 11px;
+  opacity: 0.85;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+.back-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.back-btn:active { background: rgba(255,255,255,0.3); }
+
+/* 進捗バー */
+.progress-bar-wrap {
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  margin-top: 10px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+  border-radius: 2px;
+}
+
+/* メインコンテナ */
+.container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* === ホーム画面 === */
+.home-hero {
+  text-align: center;
+  padding: 24px 0 16px;
+}
+.home-hero .badge {
+  display: inline-block;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.home-hero h2 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.home-hero p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+/* 統計カード */
+.stats-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin: 20px 0;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+}
+.stats-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.stat-item {
+  text-align: center;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+/* セクションラベル */
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin: 24px 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* 日別ラベル */
+.day-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  margin: 18px 2px 8px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--primary-light);
+}
+.day-label:first-child {
+  margin-top: 10px;
+}
+
+/* 日別まとめボタン（強調） */
+.menu-btn-day {
+  background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+  border: 2px solid var(--primary);
+  position: relative;
+}
+.menu-btn-day::before {
+  content: "📚";
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  transform: translateY(-50%);
+  width: 28px;
+  text-align: center;
+  font-size: 14px;
+  opacity: 0;
+}
+.menu-btn-day:active {
+  background: linear-gradient(135deg, var(--primary-light) 0%, #fce4e8 100%);
+}
+.menu-btn-day > .label-wrap > div:first-child {
+  color: var(--primary);
+  font-weight: 800;
+}
+.count-badge-day {
+  background: var(--primary);
+  color: white;
+}
+
+/* 理解度checkボタン */
+.menu-btn-check {
+  background: linear-gradient(135deg, #fffaf0 0%, #fff3d6 100%);
+  border-left: 4px solid var(--accent);
+}
+.menu-btn-check:active {
+  background: linear-gradient(135deg, #fff3d6 0%, #ffe9b8 100%);
+}
+.check-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: white;
+  background: var(--accent);
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.count-badge-check {
+  background: var(--accent);
+  color: white;
+}
+
+/* メニューボタン */
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  font-family: inherit;
+  box-shadow: var(--shadow);
+}
+.menu-btn:active {
+  transform: scale(0.98);
+  background: var(--primary-light);
+}
+.menu-btn .label-wrap { flex: 1; min-width: 0; }
+.menu-btn .label-sub {
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  margin-top: 2px;
+}
+.menu-btn .arrow {
+  color: var(--primary);
+  font-size: 18px;
+  margin-left: 12px;
+}
+.menu-btn .count-badge {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: auto;
+  margin-right: 10px;
+}
+
+/* プライマリボタン */
+.primary-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 14px rgba(200,16,46,0.3);
+  transition: transform 0.1s;
+}
+.primary-btn:active {
+  transform: scale(0.98);
+}
+
+/* === 問題画面 === */
+.q-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.q-category {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.q-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+.q-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  margin-bottom: 16px;
+}
+.q-type-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 10px;
+  border: 1.5px solid var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.q-text {
+  font-size: 15px;
+  line-height: 1.85;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 選択肢 */
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 100px;
+}
+.choice {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  font-family: inherit;
+  line-height: 1.5;
+}
+.choice:active {
+  background: var(--primary-light);
+}
+.choice-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--bg);
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 13px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  color: var(--ink-soft);
+  border: 1.5px solid var(--line);
+}
+.choice.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.choice.selected .choice-letter {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.choice.correct {
+  border-color: var(--correct);
+  background: var(--correct-bg);
+}
+.choice.correct .choice-letter {
+  background: var(--correct);
+  color: white;
+  border-color: var(--correct);
+}
+.choice.wrong {
+  border-color: var(--wrong);
+  background: var(--wrong-bg);
+}
+.choice.wrong .choice-letter {
+  background: var(--wrong);
+  color: white;
+  border-color: var(--wrong);
+}
+.choice:disabled {
+  cursor: default;
+}
+.choice-text { flex: 1; }
+
+/* 解説 */
+.explanation {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.exp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.exp-result {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.exp-result.correct { color: var(--correct); }
+.exp-result.wrong { color: var(--wrong); }
+.exp-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+}
+.exp-icon.correct { background: var(--correct); }
+.exp-icon.wrong { background: var(--wrong); }
+.exp-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.exp-text {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+/* 固定ボタン下部 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, transparent, var(--bg) 30%);
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 50;
+}
+.bottom-bar .primary-btn {
+  max-width: 568px;
+  pointer-events: auto;
+}
+
+/* === 結果画面 === */
+.result-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--line);
+  margin-top: 20px;
+}
+.result-score {
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  margin: 16px 0 4px;
+}
+.result-score .total {
+  font-size: 24px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.result-rate {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+}
+.result-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.result-badge.excellent {
+  background: var(--correct-bg);
+  color: var(--correct);
+}
+.result-badge.good {
+  background: #fff8e1;
+  color: var(--accent);
+}
+.result-badge.needs-work {
+  background: var(--wrong-bg);
+  color: var(--wrong);
+}
+
+.review-list {
+  margin-top: 24px;
+}
+.review-item {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.review-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.review-icon.correct { background: var(--correct); }
+.review-icon.wrong { background: var(--wrong); }
+.review-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ホーム画面追加プロンプト */
+.install-hint {
+  background: linear-gradient(135deg, #fff8e1, #fff3c4);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin: 16px 0;
+  font-size: 12px;
+  color: #6b5a00;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.install-hint .icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* スライドイン */
+.screen {
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 設定 */
+.reset-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-top: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+}
+.reset-btn:active { background: var(--bg); }
+
+/* 設定セクション */
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  font-size: 14px;
+}
+.setting-row .label {
+  font-weight: 600;
+}
+.setting-row .desc {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+
+/* スイッチ */
+.switch {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  background: var(--line);
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.switch.on { background: var(--primary); }
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch.on::after {
+  transform: translateX(18px);
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="questions.js"></script>
+<script>
+// ========================================
+// 状態管理
+// ========================================
+const STORAGE_KEY = 'qc3_app_state_v1';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    history: [],         // {id, correct, ts}
+    totalAttempts: 0,
+    totalCorrect: 0,
+    shuffle: true,
+    lastCategory: "すべて"
+  };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+let session = null; // 現在の演習セッション
+
+// ========================================
+// ユーティリティ
+// ========================================
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// 日別グループ定義（中央で管理）
+const DAY_GROUPS = [
+  { key: "day:1", label: "1日目 — QC的ものの見方・考え方①", items: [
+    "マーケットイン・プロダクトアウト",
+    "顧客の特定",
+    "Win-Win",
+    "品質第一",
+    "後工程はお客様",
+    "プロセス重視",
+    "特性と要因、因果関係",
+    "応急対策・再発防止・未然防止",
+    "源流管理・目的志向・QCD+PSME",
+    "1日目 理解度check"
+  ]},
+  { key: "day:2", label: "2日目 — QC的ものの見方・考え方②", items: [
+    "重点指向",
+    "事実に基づく活動",
+    "三現主義・5ゲン主義",
+    "見える化・トラブルの顕在化",
+    "ばらつきに注目する",
+    "全部門・全員参加",
+    "人間性尊重・従業員満足",
+    "2日目 理解度check"
+  ]},
+  { key: "day:3", label: "3日目 — 品質の概念", items: [
+    "品質の定義",
+    "要求品質と品質要素",
+    "ねらいの品質とできばえの品質",
+    "品質特性と代用特性",
+    "当たり前品質・魅力的品質・一元的品質",
+    "サービスの品質と仕事の品質",
+    "社会的品質",
+    "顧客満足と顧客価値",
+    "3日目 理解度check"
+  ]},
+  { key: "day:4", label: "4日目 — 管理の方法①", items: [
+    "維持と管理",
+    "PDCA・SDCA・PDCAS",
+    "継続的改善",
+    "問題と課題",
+    "4日目 理解度check"
+  ]},
+  { key: "day:5", label: "5日目 — 管理の方法②", items: [
+    "問題解決型QCストーリー",
+    "課題達成型QCストーリー",
+    "5日目 理解度check"
+  ]}
+];
+
+// 日別キー -> 含まれるカテゴリ配列
+function getDayCategories(dayKey) {
+  const g = DAY_GROUPS.find(g => g.key === dayKey);
+  return g ? g.items : [];
+}
+
+// 日別キー -> 表示ラベル（例: "1日目 まとめ"）
+function getDayShortLabel(dayKey) {
+  const num = dayKey.split(':')[1];
+  return `${num}日目 まとめ`;
+}
+
+function getQuestionsByCategory(cat) {
+  if (cat === "すべて") return [...QUESTIONS];
+  // 日別まとめ
+  if (cat.startsWith("day:")) {
+    const cats = getDayCategories(cat);
+    return QUESTIONS.filter(q => cats.includes(q.category));
+  }
+  return QUESTIONS.filter(q => q.category === cat);
+}
+
+function getOverallRate() {
+  if (state.totalAttempts === 0) return 0;
+  return Math.round(state.totalCorrect / state.totalAttempts * 100);
+}
+
+function getCategoryStats(cat) {
+  const qs = getQuestionsByCategory(cat);
+  const ids = new Set(qs.map(q => q.id));
+  const relevant = state.history.filter(h => ids.has(h.id));
+  if (relevant.length === 0) return { attempts: 0, correct: 0, rate: 0 };
+  const correct = relevant.filter(h => h.correct).length;
+  return {
+    attempts: relevant.length,
+    correct,
+    rate: Math.round(correct / relevant.length * 100)
+  };
+}
+
+// ========================================
+// 画面描画
+// ========================================
+const app = document.getElementById('app');
+
+function render(view) {
+  app.innerHTML = view;
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// ========================================
+// ホーム画面
+// ========================================
+function renderHome() {
+  const rate = getOverallRate();
+  const attempted = new Set(state.history.map(h => h.id)).size;
+  const installHint = !window.matchMedia('(display-mode: standalone)').matches
+    ? `<div class="install-hint"><span class="icon">📱</span><div>ホーム画面に追加すると、アプリのように使えます。Safariの共有メニュー→「ホーム画面に追加」をタップ。</div></div>`
+    : '';
+
+  // 通常カテゴリ用ボタン
+  const buildBtn = cat => {
+    const count = cat === "すべて" ? QUESTIONS.length : QUESTIONS.filter(q => q.category === cat).length;
+    const stats = getCategoryStats(cat);
+    const subText = stats.attempts > 0
+      ? `正答率 ${stats.rate}%（${stats.attempts}回挑戦）`
+      : `${count}問・未挑戦`;
+    const isCheck = cat.includes("理解度check");
+    const extraClass = isCheck ? " menu-btn-check" : "";
+    const labelPrefix = isCheck ? '<span class="check-tag">理解度check</span>' : '';
+    const labelText = isCheck ? cat.replace(/ ?理解度check$/, "") + "（書籍掲載問題）" : cat;
+    return `
+      <button class="menu-btn${extraClass}" onclick="startSession('${cat.replace(/'/g, "\\'")}')">
+        <div class="label-wrap">
+          <div>${labelPrefix}${labelText}</div>
+          <div class="label-sub">${subText}</div>
+        </div>
+        <span class="count-badge${isCheck ? ' count-badge-check' : ''}">${count}問</span>
+        <span class="arrow">›</span>
+      </button>
+    `;
+  };
+
+  // 日別まとめボタン（強調デザイン）
+  const buildDayAllBtn = group => {
+    const count = QUESTIONS.filter(q => group.items.includes(q.category)).length;
+    const stats = getCategoryStats(group.key);
+    const subText = stats.attempts > 0
+      ? `正答率 ${stats.rate}%（${stats.attempts}回挑戦）`
+      : `この日の全${count}問にまとめて挑戦`;
+    return `
+      <button class="menu-btn menu-btn-day" onclick="startSession('${group.key}')">
+        <div class="label-wrap">
+          <div>${getDayShortLabel(group.key)}</div>
+          <div class="label-sub">${subText}</div>
+        </div>
+        <span class="count-badge count-badge-day">${count}問</span>
+        <span class="arrow">›</span>
+      </button>
+    `;
+  };
+
+  // すべての問題ボタン + 各日グループ
+  const categoryButtons = [
+    buildBtn("すべて"),
+    ...DAY_GROUPS.map(group => `
+      <div class="day-label">${group.label}</div>
+      ${buildDayAllBtn(group)}
+      ${group.items.map(buildBtn).join('')}
+    `)
+  ].join('');
+
+  render(`
+    <div class="header">
+      <div class="header-inner">
+        <div>
+          <div class="sub">QC KENTEI</div>
+          <h1>QC検定3級 問題演習</h1>
+        </div>
+      </div>
+    </div>
+    <div class="container screen">
+      <div class="home-hero">
+        <span class="badge">QC的ものの見方・考え方</span>
+        <h2>マスターしよう。</h2>
+        <p>スキマ時間で品質管理の基礎を。</p>
+      </div>
+
+      ${installHint}
+
+      <div class="stats-card">
+        <div class="stats-title">あなたの進捗</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">${attempted}<span style="font-size:14px;color:var(--ink-soft)">/${QUESTIONS.length}</span></div>
+            <div class="stat-label">挑戦済み</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${rate}<span style="font-size:14px;color:var(--ink-soft)">%</span></div>
+            <div class="stat-label">通算正答率</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${state.totalCorrect}</div>
+            <div class="stat-label">正解数</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">分野別演習</div>
+      ${categoryButtons}
+
+      <div class="section-label">設定</div>
+      <div class="setting-row">
+        <div>
+          <div class="label">問題順をシャッフル</div>
+          <div class="desc">ランダムな順番で出題</div>
+        </div>
+        <div class="switch ${state.shuffle ? 'on' : ''}" onclick="toggleShuffle()"></div>
+      </div>
+      <button class="reset-btn" onclick="confirmReset()">学習履歴をリセット</button>
+    </div>
+  `);
+}
+
+function toggleShuffle() {
+  state.shuffle = !state.shuffle;
+  saveState();
+  renderHome();
+}
+
+function confirmReset() {
+  if (confirm("学習履歴をすべてリセットしますか？\n（問題は引き続き利用できます）")) {
+    state.history = [];
+    state.totalAttempts = 0;
+    state.totalCorrect = 0;
+    saveState();
+    renderHome();
+  }
+}
+
+// ========================================
+// 演習セッション開始
+// ========================================
+function startSession(category) {
+  const questions = getQuestionsByCategory(category);
+  if (questions.length === 0) return;
+  state.lastCategory = category;
+  saveState();
+  // 表示用ラベル（day:1 → "1日目 まとめ" など）
+  const displayLabel = category.startsWith("day:") ? getDayShortLabel(category) : category;
+  session = {
+    category,
+    displayLabel,
+    questions: state.shuffle ? shuffleArray(questions) : questions,
+    index: 0,
+    answers: [], // {qid, selected, correct}
+    selected: null,
+    answered: false
+  };
+  renderQuestion();
+}
+
+// ========================================
+// 問題画面
+// ========================================
+function renderQuestion() {
+  const q = session.questions[session.index];
+  const total = session.questions.length;
+  const progress = ((session.index) / total) * 100;
+  const typeLabel = q.type === 'truefalse' ? '正誤問題' : '選択問題';
+
+  const choicesHTML = q.choices.map((c, i) => {
+    let cls = "choice";
+    if (session.answered) {
+      if (i === q.answer) cls += " correct";
+      else if (i === session.selected) cls += " wrong";
+    } else if (session.selected === i) {
+      cls += " selected";
+    }
+    const letter = String.fromCharCode(65 + i); // A, B, C, D
+    return `
+      <button class="${cls}" onclick="selectChoice(${i})" ${session.answered ? 'disabled' : ''}>
+        <span class="choice-letter">${letter}</span>
+        <span class="choice-text">${escapeHTML(c)}</span>
+      </button>
+    `;
+  }).join('');
+
+  const explanationHTML = session.answered ? `
+    <div class="explanation">
+      <div class="exp-header">
+        <span class="exp-icon ${session.selected === q.answer ? 'correct' : 'wrong'}">
+          ${session.selected === q.answer ? '✓' : '×'}
+        </span>
+        <span class="exp-result ${session.selected === q.answer ? 'correct' : 'wrong'}">
+          ${session.selected === q.answer ? '正解！' : '不正解'}
+        </span>
+      </div>
+      <div class="exp-label">解説</div>
+      <div class="exp-text">${escapeHTML(q.explanation)}</div>
+    </div>
+  ` : '';
+
+  const bottomBtn = session.answered
+    ? `<button class="primary-btn" onclick="nextQuestion()">${session.index + 1 >= total ? '結果を見る' : '次の問題へ'}</button>`
+    : `<button class="primary-btn" onclick="submitAnswer()" ${session.selected === null ? 'style="opacity:0.4;pointer-events:none"' : ''}>回答する</button>`;
+
+  render(`
+    <div class="header">
+      <div class="header-inner">
+        <button class="back-btn" onclick="confirmExit()">‹</button>
+        <div style="flex:1;text-align:center">
+          <div class="sub">${escapeHTML(session.displayLabel)}</div>
+          <h1 style="font-size:14px">${session.index + 1} / ${total}</h1>
+        </div>
+        <div style="width:36px"></div>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" style="width:${progress}%"></div>
+      </div>
+    </div>
+    <div class="container screen">
+      <div class="q-meta">
+        <div class="q-category">${escapeHTML(q.category)}</div>
+        <div class="q-number">Q.${String(session.index + 1).padStart(2, '0')}</div>
+      </div>
+      <div class="q-card">
+        <div class="q-type-label">${typeLabel}</div>
+        <div class="q-text">${escapeHTML(q.question)}</div>
+      </div>
+      <div class="choices">
+        ${choicesHTML}
+      </div>
+      ${explanationHTML}
+    </div>
+    <div class="bottom-bar">
+      ${bottomBtn}
+    </div>
+  `);
+}
+
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function selectChoice(i) {
+  if (session.answered) return;
+  session.selected = i;
+  renderQuestion();
+}
+
+function submitAnswer() {
+  if (session.selected === null) return;
+  const q = session.questions[session.index];
+  const correct = session.selected === q.answer;
+  session.answered = true;
+  session.answers.push({ qid: q.id, selected: session.selected, correct });
+
+  // 履歴記録
+  state.history.push({ id: q.id, correct, ts: Date.now() });
+  state.totalAttempts += 1;
+  if (correct) state.totalCorrect += 1;
+  saveState();
+
+  // 触覚フィードバック（対応端末のみ）
+  if (navigator.vibrate) navigator.vibrate(correct ? 30 : [30, 50, 30]);
+
+  renderQuestion();
+}
+
+function nextQuestion() {
+  session.index += 1;
+  session.selected = null;
+  session.answered = false;
+  if (session.index >= session.questions.length) {
+    renderResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function confirmExit() {
+  if (session && session.answers.length > 0 && session.index < session.questions.length) {
+    if (!confirm("演習を中断してホームに戻りますか？")) return;
+  }
+  session = null;
+  renderHome();
+}
+
+// ========================================
+// 結果画面
+// ========================================
+function renderResult() {
+  const total = session.questions.length;
+  const correct = session.answers.filter(a => a.correct).length;
+  const rate = Math.round(correct / total * 100);
+
+  let badge, badgeClass, msg;
+  if (rate >= 90) {
+    badge = "EXCELLENT"; badgeClass = "excellent"; msg = "素晴らしい！合格レベルです";
+  } else if (rate >= 70) {
+    badge = "GOOD"; badgeClass = "good"; msg = "あと一歩。復習して確実に";
+  } else {
+    badge = "KEEP GOING"; badgeClass = "needs-work"; msg = "苦手分野を重点的に復習しましょう";
+  }
+
+  const reviewHTML = session.answers.map((a, i) => {
+    const q = QUESTIONS.find(qq => qq.id === a.qid);
+    const summary = q.question.replace(/[\n\r]/g, ' ').substring(0, 40);
+    return `
+      <div class="review-item">
+        <div class="review-icon ${a.correct ? 'correct' : 'wrong'}">${a.correct ? '✓' : '×'}</div>
+        <div class="review-text">Q${i+1}. ${escapeHTML(summary)}...</div>
+      </div>
+    `;
+  }).join('');
+
+  render(`
+    <div class="header">
+      <div class="header-inner">
+        <button class="back-btn" onclick="returnHome()">‹</button>
+        <div style="flex:1;text-align:center">
+          <div class="sub">RESULT</div>
+          <h1 style="font-size:15px">演習結果</h1>
+        </div>
+        <div style="width:36px"></div>
+      </div>
+    </div>
+    <div class="container screen">
+      <div class="result-card">
+        <div class="result-badge ${badgeClass}">${badge}</div>
+        <div class="result-score">${correct}<span class="total">/${total}</span></div>
+        <div class="result-rate">正答率 ${rate}% ・ ${escapeHTML(msg)}</div>
+        <button class="primary-btn" onclick="retryWrong()" ${correct === total ? 'style="display:none"' : ''}>
+          間違えた問題を復習
+        </button>
+        <button class="primary-btn" style="background:transparent;color:var(--primary);border:2px solid var(--primary);box-shadow:none;margin-top:10px" onclick="startSession('${session.category.replace(/'/g, "\\'")}')">
+          もう一度挑戦
+        </button>
+        <button class="reset-btn" onclick="returnHome()">ホームに戻る</button>
+      </div>
+
+      <div class="section-label">回答一覧</div>
+      <div class="review-list">
+        ${reviewHTML}
+      </div>
+    </div>
+  `);
+}
+
+function retryWrong() {
+  const wrongIds = new Set(session.answers.filter(a => !a.correct).map(a => a.qid));
+  const wrongQs = QUESTIONS.filter(q => wrongIds.has(q.id));
+  if (wrongQs.length === 0) return;
+  session = {
+    category: session.category + "（復習）",
+    displayLabel: session.displayLabel + "（復習）",
+    questions: state.shuffle ? shuffleArray(wrongQs) : wrongQs,
+    index: 0,
+    answers: [],
+    selected: null,
+    answered: false
+  };
+  renderQuestion();
+}
+
+function returnHome() {
+  session = null;
+  renderHome();
+}
+
+// ========================================
+// Service Worker 登録
+// ========================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// グローバル公開
+window.startSession = startSession;
+window.toggleShuffle = toggleShuffle;
+window.confirmReset = confirmReset;
+window.selectChoice = selectChoice;
+window.submitAnswer = submitAnswer;
+window.nextQuestion = nextQuestion;
+window.confirmExit = confirmExit;
+window.retryWrong = retryWrong;
+window.returnHome = returnHome;
+
+// 初期表示
+renderHome();
+</script>
+</body>
+</html>
